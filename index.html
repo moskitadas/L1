@@ -1,0 +1,193 @@
+<html><head><base href="." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Jornada do Viajante - História Interativa</title>
+<style>
+    body {
+        font-family: 'Georgia', serif;
+        background: linear-gradient(135deg, #2c1515 0%, #4c1515 100%);
+        color: #fff;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .container {
+        background: rgba(20, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        margin-top: 50px;
+    }
+
+    .story {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    button {
+        background: linear-gradient(45deg, #8b0000, #ff0000);
+        border: none;
+        color: white;
+        padding: 15px 25px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+    }
+
+    .fade {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .title {
+        font-size: 32px;
+        color: #ff0000;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">A Jornada do Viajante</h1>
+    <div id="story" class="story fade"></div>
+    <div id="options" class="options"></div>
+</div>
+
+<script>
+const story = {
+    start: {
+        text: "Você é um viajante que encontrou um antigo templo na floresta. A entrada está selada com um enigma mágico. O que você faz?",
+        options: [
+            { text: "Examinar os símbolos antigos na porta", nextId: "symbols", correct: true },
+            { text: "Tentar quebrar a porta com força", nextId: "gameOver", correct: false },
+            { text: "Procurar uma entrada alternativa", nextId: "alternative", correct: true },
+            { text: "Gritar por ajuda", nextId: "gameOver", correct: false }
+        ]
+    },
+    symbols: {
+        text: "Os símbolos começam a brilhar quando você os toca. Você percebe que é uma sequência matemática antiga. Como você procede?",
+        options: [
+            { text: "Resolver o enigma matemático", nextId: "inside", correct: true },
+            { text: "Ignorar os símbolos e procurar outra solução", nextId: "gameOver", correct: false },
+            { text: "Usar conhecimento de astronomia antiga", nextId: "astronomy", correct: true },
+            { text: "Desenhar novos símbolos", nextId: "gameOver", correct: false }
+        ]
+    },
+    alternative: {
+        text: "Você encontra uma pequena passagem coberta por vinhas. O que você faz?",
+        options: [
+            { text: "Cortar as vinhas cuidadosamente", nextId: "secret", correct: true },
+            { text: "Queimar as vinhas", nextId: "gameOver", correct: false },
+            { text: "Examinar as vinhas em busca de padrões", nextId: "pattern", correct: true },
+            { text: "Puxar as vinhas com força", nextId: "gameOver", correct: false }
+        ]
+    },
+    inside: {
+        text: "Você conseguiu entrar no templo! Uma sala circular com três portas se revela. Qual você escolhe?",
+        options: [
+            { text: "A porta com símbolos do sol", nextId: "treasure", correct: true },
+            { text: "A porta com símbolos da lua", nextId: "gameOver", correct: false },
+            { text: "A porta com símbolos das estrelas", nextId: "stars", correct: true },
+            { text: "A porta com símbolos do vento", nextId: "gameOver", correct: false }
+        ]
+    },
+    astronomy: {
+        text: "Seus conhecimentos revelam um padrão celestial! O que você faz com essa informação?",
+        options: [
+            { text: "Alinhar os símbolos com constelações", nextId: "constellation", correct: true },
+            { text: "Ignorar o padrão", nextId: "gameOver", correct: false },
+            { text: "Esperar o pôr do sol", nextId: "sunset", correct: true },
+            { text: "Desistir da busca", nextId: "gameOver", correct: false }
+        ]
+    },
+    secret: {
+        text: "Você descobriu uma câmara secreta! O que fazer agora?",
+        options: [
+            { text: "Explorar com cautela", nextId: "treasure", correct: true },
+            { text: "Correr para dentro", nextId: "gameOver", correct: false },
+            { text: "Mapear o local", nextId: "map", correct: true },
+            { text: "Sair correndo", nextId: "gameOver", correct: false }
+        ]
+    },
+    pattern: {
+        text: "As vinhas formam um código antigo! Como proceder?",
+        options: [
+            { text: "Decifrar o código", nextId: "decode", correct: true },
+            { text: "Ignorar o código", nextId: "gameOver", correct: false },
+            { text: "Estudar o padrão das folhas", nextId: "leaves", correct: true },
+            { text: "Arrancar todas as vinhas", nextId: "gameOver", correct: false }
+        ]
+    },
+    treasure: {
+        text: "Parabéns! Você encontrou o tesouro sagrado do templo! Você é verdadeiramente um aventureiro sábio!",
+        options: [
+            { text: "Jogar novamente", nextId: "start", correct: true },
+            { text: "Continuar explorando", nextId: "start", correct: true },
+            { text: "Sair do templo", nextId: "start", correct: true },
+            { text: "Guardar o tesouro", nextId: "start", correct: true }
+        ]
+    },
+    gameOver: {
+        text: "Sua escolha não foi sábia... O templo o expulsou e você precisa recomeçar sua jornada.",
+        options: [
+            { text: "Tentar novamente", nextId: "start", correct: true },
+            { text: "Recomeçar a aventura", nextId: "start", correct: true },
+            { text: "Nova tentativa", nextId: "start", correct: true },
+            { text: "Voltar ao início", nextId: "start", correct: true }
+        ]
+    }
+};
+
+let currentState = 'start';
+
+function updateGame(stateId) {
+    const state = story[stateId];
+    const storyDiv = document.getElementById('story');
+    const optionsDiv = document.getElementById('options');
+    
+    storyDiv.innerHTML = state.text;
+    optionsDiv.innerHTML = '';
+    
+    state.options.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.text;
+        button.addEventListener('click', () => {
+            if (option.correct) {
+                currentState = option.nextId;
+                updateGame(option.nextId);
+            } else {
+                currentState = 'gameOver';
+                updateGame('gameOver');
+            }
+        });
+        optionsDiv.appendChild(button);
+    });
+}
+
+// Iniciar o jogo
+updateGame('start');
+</script>
+</body>
+</html>
